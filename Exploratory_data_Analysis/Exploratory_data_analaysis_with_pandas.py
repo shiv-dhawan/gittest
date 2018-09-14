@@ -101,6 +101,55 @@ df.head()
 df= df.replace({'Voice mail plan' : d})
 df.head()
 
+'''First, the groupby method divides the grouping_columns by their values. 
+They become a new index in the resulting dataframe.
+Then, columns of interest are selected (columns_to_show).
+If columns_to_show is not included, all non groupby clauses will be included.
+Finally,one or several functions are applied to the obtained groups per selected columns.
+
+df.groupby(by=grouping_columns)[columns_to_show].function()'''
+
+columns_to_show = ['Total day minutes', 'Total eve minutes', 
+                   'Total night minutes']
+
+df.groupby(['Churn'])[columns_to_show].describe(percentiles=[])
+
+df.groupby(['Churn'])[columns_to_show].agg([np.mean, np.std, np.min, np.max])
+
+'''Suppose we want to see how the observations in our sample are distributed
+in the context of two variables - Churn and International plan. 
+To do so, we can build a contingency table using the crosstab method:'''
+
+pd.crosstab(df['Churn'], df['International plan'])
+
+'''pivot tables are implemented in Pandas: 
+    the pivot_table method takes the following parameters:
+
+values - a list of variables to calculate statistics for,
+index – a list of variables to group data by,
+aggfunc — what statistics we need to calculate for groups - e.g 
+sum, mean, maximum, minimum or something else.'''
+
+df.pivot_table(['Total day calls', 'Total eve calls', 'Total night calls'],
+               ['Area code'], aggfunc='mean')
+
+pd.crosstab(df['Churn'], df['International plan'], margins=True)
+
+
+#Some Visualization
+# some imports and "magic" commands to set up plotting 
+%matplotlib inline 
+import matplotlib.pyplot as plt
+# pip install seaborn 
+import seaborn as sns
+plt.rcParams['image.cmap'] = 'viridis'
+sns.countplot(x='International plan', hue='Churn', data=df);
+
+
+pd.crosstab(df['Churn'], df['Customer service calls'], margins=True)
+
+
+
 
 
 
